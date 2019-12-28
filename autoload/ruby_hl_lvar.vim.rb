@@ -116,8 +116,17 @@ module RubyHlLvar
 
     define_matcher :handle_massign_lhs_item do|r|
       p = Patm
+      r.on [:var_field, [:@ident, p._1, [p._2, p._3]]] do|m|
+        [[m._1, m._2, m._3]]
+      end
       r.on [:@ident, p._1, [p._2, p._3]] do|m|
         [[m._1, m._2, m._3]]
+      end
+      r.on [:mlhs, p._1, p._2] do|m, _self|
+        _self.handle_massign_lhs(m._1) + _self.handle_massign_lhs([m._2])
+      end
+      r.on [:mlhs, p._1, p._2, p._3] do|m, _self|
+        _self.handle_massign_lhs(m._1) + _self.handle_massign_lhs([m._2]) + _self.handle_massign_lhs([m._3])
       end
       r.on [:mlhs_paren, p._1] do|m, _self|
         _self.handle_massign_lhs(m._1)
@@ -133,6 +142,9 @@ module RubyHlLvar
       end
       r.on [p.or(:field, :@ivar, :@cvar, :@gvar, :@const), p._xs] do
         []
+      end
+      r.on [:rest_param, p._1] do|m, _self|
+        _self.handle_massign_lhs_item(m._1)
       end
       r.on nil do
         []
