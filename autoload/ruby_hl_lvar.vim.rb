@@ -36,6 +36,8 @@ end
 
 if Gem::Version.create(RUBY_VERSION) < Gem::Version.create('2.5.0')
   require File.join(File.dirname(__FILE__), 'extractor_240.rb')
-else
+elsif Gem::Version.create(RUBY_VERSION) < Gem::Version.create('2.7.0')
   require File.join(File.dirname(__FILE__), 'extractor_250.rb')
+else
+  require File.join(File.dirname(__FILE__), 'extractor_270.rb')
 end
